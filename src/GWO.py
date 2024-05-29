@@ -2,6 +2,7 @@ from Wolf import Wolf
 import random
 import numpy as np
 import time
+import matplotlib.pyplot as plt
 
 
 class GWO:
@@ -24,6 +25,10 @@ class GWO:
         self.beta = None
         self.delta = None
 
+        self.alpha_eval = []
+        self.beta_eval = []
+        self.delta_eval = []
+
         self.set_hierarchy()
 
 
@@ -44,6 +49,33 @@ class GWO:
         self.alpha = self.population[-1]
         self.beta = self.population[-2]
         self.delta = self.population[-3]
+
+        self.generation_data()
+
+    def generation_data(self):
+
+        self.alpha_eval.append(self.alpha.fitness)
+        self.beta_eval.append(self.beta.fitness)
+        self.delta_eval.append(self.delta.fitness)
+
+    def plot_generations(self):
+        x = np.arange(0, self.iterations + 1, 1)
+
+        self.alpha_eval = np.array(self.alpha_eval)
+        self.beta_eval = np.array(self.beta_eval)
+        self.delta_eval = np.array(self.delta_eval)
+
+        plt.plot(x, self.alpha_eval, label="Alpha")
+        plt.plot(x, self.beta_eval, label="Beta")
+        plt.plot(x, self.delta_eval, label="Delta")
+
+        plt.title("Evolución de los mejores ejemplares por generación")
+        plt.xlabel("Generación")
+        plt.ylabel("Aptitud")
+
+        plt.legend()
+
+        plt.show()
 
     def hunt(self):
         # Realizamos los ciclos especificados
@@ -90,5 +122,7 @@ class GWO:
 
             self.population = np.sort(self.population)
             self.set_hierarchy()
+
+        self.plot_generations()
 
         return self.alpha
